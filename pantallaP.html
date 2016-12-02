@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Mi primer script en PHP</title>
+	<meta charset="utf-8">  
+</head>
+<body bgcolor="#BCF9FB" onload="poll()">
+
+	<div align='center' style="background-color:#BCF9FB ">
+
+
+		
+		<!-- <button onclick='insertar(this)'> Insertar</button><br> -->
+		
+		<br> <br>  
+		Dudas pendientes<br> <br>
+		<div id="id01"></div>
+		<div id="reult"></div>
+
+		<script>	
+			var intevalo = setInterval('poll()',5000);
+			var xmlhttp = new XMLHttpRequest();
+			// recarga funcion cada 5 segundos
+			setTimeout('poll()',5000); 
+
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					document.getElementById("id01").innerHTML = this.responseText;
+				}
+			};
+
+			xmlhttp.open("GET", url, true);
+			xmlhttp.send();
+
+			function mostrar(varclik) {
+
+				var c = varclik.innerHTML;
+				var usuario;
+				var pregunta;
+
+
+				var paso;
+				for (paso = 0; paso < 2; paso++) {
+					c = c.replace('<td>', '');
+					c = c.replace('</td>', '');
+
+					for (pas = 0; pas < 2; pas++) {
+						c = c.replace("\"","");
+					};
+				};
+
+				var y = c.split(" ");
+				
+				if(y[4]!=null){
+					var n = y[1]+" "+y[2];
+					var c = y[4];
+				}else{
+					var n = y[1] ;
+					var c = y[3];
+				}
+
+
+				document.getElementById("usuario").value = c;
+				document.getElementById("pregunta").value = n;
+
+
+
+
+			}
+
+			
+
+
+
+
+
+			function poll() {
+
+				var xmlhttp = new XMLHttpRequest();
+				var url = "vertablajson.php";
+
+				xmlhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						document.getElementById("id01").innerHTML = this.responseText;
+					}
+				};
+
+				xmlhttp.open("GET", url, true);
+				xmlhttp.send();
+			}
+
+
+
+
+
+
+
+		</script>
+	</div>
+
+
+
+
+</body>
+</html>

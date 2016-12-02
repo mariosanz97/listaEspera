@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Mi primer script en PHP</title>
+	<meta charset="utf-8">  
+</head>
+<body bgcolor="#BCF9FB" onload="poll()">
+
+	<div align='center' style="background-color:#BCF9FB ">
+
+		<div align="center">
+			<br>
+			
+			Usuario<br>
+			<input type="text" id="usuario"><br><br>
+			Pregunta:<br><br>
+			<textarea id="pregunta" rows="5" cols="40"></textarea>
+			<br><br>  
+			
+			<button onclick='Insertar(this)' id="Insertar"> Insertar duda</button><br> 
+			
+		</div>
+		<br><br> 
+		idpeticion<br>
+		<input type="text" id="idpeticion" readonly="readonly"><br><br>
+		<button onclick='Eliminar(this)' id="Eliminar"> Marcar como resuelta</button><br>
+		
+		
+		<br> <br>  
+
+		<div id="id01"></div>
+		<div id="reult"></div>
+
+		<script>	
+		// recarga funcion cada 5 segundos
+			setInterval('poll()',3000);
+			var xmlhttp = new XMLHttpRequest();
+			var url = "vertablajson.php"; 
+
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					document.getElementById("id01").innerHTML = this.responseText;
+				}
+			};
+
+			xmlhttp.open("GET", url, true);
+			xmlhttp.send();
+
+			
+
+
+
+
+			function poll() {
+
+				var xmlhttp = new XMLHttpRequest();
+				var url = "vertablajson.php";
+
+				xmlhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						document.getElementById("id01").innerHTML = this.responseText;
+					}
+				};
+
+				xmlhttp.open("GET", url, true);
+				xmlhttp.send();
+			}
+
+			function mostrar(varclik) {
+
+				var c = varclik.innerHTML;
+				var idpeticion;
+				var pregunta;
+
+
+				var paso;
+				for (paso = 0; paso < 2; paso++) {
+					c = c.replace('<td>', '');
+					c = c.replace('</td>', '');
+
+					for (pas = 0; pas < 2; pas++) {
+						c = c.replace("\"","");
+					};
+				};
+
+				var y = c.split(" ");
+				
+				if(y[4]!=null){
+					var n = y[1]+" "+y[2];
+					var c = y[4];
+				}else{
+					var n = y[1] ;
+					var c = y[3];
+				}
+
+
+				document.getElementById("idpeticion").value = n 
+
+			}
+
+
+			function Insertar(varclik) {
+
+				var usuario = document.getElementById("usuario").value;
+				var pregunta = document.getElementById("pregunta").value;
+
+
+				var http = new XMLHttpRequest();
+				var url = "anadir.php";
+				var params = "usuario="+usuario+"&pregunta="+pregunta;
+				http.open("POST", url, true);
+
+			//Send the proper header information along with the request
+			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+			http.onreadystatechange = function() {//Call a function when the state changes.
+				if(http.readyState == 4 && http.status == 200) {
+					poll();
+				}
+			}
+			http.send(params);
+			document.getElementById("usuario").value="";
+			document.getElementById("pregunta").value="";
+
+
+
+			
+
+/*
+				var json_upload = "datos=" + JSON.stringify({usuario:usuario, pregunta:pregunta});
+				var url = "anadir.php";
+				var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+				xmlhttp.open("POST", url);
+				
+
+				xmlhttp.onreadystatechange = function() {
+					if(this.readyState == 4 && this.status == 200) {
+						alert(this.responseText);
+						var Js = JSON.parse(this.responseText);
+					}
+
+					xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+					xmlhttp.send(json_upload);
+
+				}
+
+				*/
+
+			}
+
+			function Eliminar(varclik) {
+
+				var idpeticion = document.getElementById("idpeticion").value;
+
+
+				var http = new XMLHttpRequest();
+				var url = "borrar.php";
+				var params = "idpeticion="+idpeticion;
+				http.open("POST", url, true);
+
+			//Send the proper header information along with the request
+			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+			http.onreadystatechange = function() {//Call a function when the state changes.
+				if(http.readyState == 4 && http.status == 200) {
+					poll();
+				}
+			}
+			http.send(params);
+			document.getElementById("idpeticion").value=""; 
+
+
+
+		}
+
+
+	</script>
+</div>
+
+
+
+
+</body>
+</html>
